@@ -1,0 +1,265 @@
+C51 COMPILER V9.00   MAIN                                                                  07/11/2018 09:55:28 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: D:\MDK5\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include<reg52.h>
+   2          typedef  unsigned char u8;
+   3          typedef  unsigned int u16;
+   4          
+   5          sbit ENA=P1^0;            //定义端口
+   6          sbit IN1=P1^1;
+   7          sbit IN2=P1^2;
+   8          sbit IN3=P1^3; 
+   9          sbit IN4=P1^4;
+  10          sbit ENB=P1^5;
+  11          sbit k1=P3^2;
+  12          sbit k2=P3^3;
+  13          sbit k=P3^4;
+  14          
+  15          u16 i=0;                   //定义一些计数变量
+  16          u16 j=0;
+  17          u16 a;
+  18          u16 b;
+  19          u16 t=0;
+  20          
+  21          void turnleft();                //定义函数
+  22          void turnright();
+  23          void gostright();
+  24          void delay(u16);
+  25          void timestart();
+  26          void startup();
+  27          void special1();
+  28          void special2();
+  29          void special3();
+  30          void special4();
+  31          
+  32          void startup()          //初始化函数
+  33          {
+  34   1              IN1=1;
+  35   1              IN2=0;
+  36   1              IN3=1;
+  37   1              IN4=0;
+  38   1              a=25;
+  39   1              b=25;
+  40   1      
+  41   1      }
+  42          
+  43          void timestart()   //定时器准备函数
+  44          {
+  45   1              TMOD=0x22;
+  46   1              TH0=0x9c;
+  47   1              TL0=0x9c;
+  48   1              TH1=0x9c;
+  49   1              TL1=0x9c;
+  50   1              EA=1;
+  51   1              ET0=1;
+  52   1              TR0=1;
+  53   1              ET1=1;
+  54   1              TR1=1;
+  55   1      }
+C51 COMPILER V9.00   MAIN                                                                  07/11/2018 09:55:28 PAGE 2   
+
+  56          
+  57          timer1 () interrupt 1  //定时中断函数1,用于控制左轮速度
+  58          {
+  59   1              i++;
+  60   1              if(i<a)
+  61   1              {
+  62   2                      ENA=1;
+  63   2                      
+  64   2              }
+  65   1              else if(i==100)
+  66   1              {
+  67   2                      ENA=1;
+  68   2                      i=0;
+  69   2              }
+  70   1              else
+  71   1              {
+  72   2                      ENA=0;
+  73   2              }       
+  74   1      }
+  75          
+  76          timer2 () interrupt 3  //定时中断函数2,用于控制右轮速度
+  77          {
+  78   1              j++;
+  79   1              if(j<b)
+  80   1              {
+  81   2                      ENB=1;
+  82   2                      
+  83   2              }
+  84   1              else if(j==100)
+  85   1              {
+  86   2                      ENB=1;
+  87   2                      j=0;
+  88   2              }
+  89   1              else
+  90   1              {
+  91   2                      ENB=0;
+  92   2              }       
+  93   1      }
+  94          
+  95          void gostraight()         //中间传感器压线，直行函数
+  96          {
+  97   1              if(k1==0&&k==1&&k2==0)
+  98   1              {
+  99   2                      delay(100);
+ 100   2                      if(k1==0&&k==1&&k2==0)
+ 101   2                      {
+ 102   3                              a=21;
+ 103   3                              b=21;
+ 104   3                              IN1=1;
+ 105   3                              IN2=0;
+ 106   3                              IN3=1;
+ 107   3                              IN4=0;
+ 108   3                      }
+ 109   2              }
+ 110   1      }
+ 111          
+ 112          void turnleft()            //判断左边传感器是否压线
+ 113          {
+ 114   1              if(k1==1&&k==0&&k2==0)
+ 115   1              {
+ 116   2                      delay(100);
+ 117   2                      if(k1==1&&k==0&&k2==0)
+C51 COMPILER V9.00   MAIN                                                                  07/11/2018 09:55:28 PAGE 3   
+
+ 118   2                      {
+ 119   3                              a=21;
+ 120   3                              b=21;
+ 121   3                              IN1=1;
+ 122   3                              IN2=1;
+ 123   3                              IN3=1;
+ 124   3                              IN4=0;
+ 125   3                      }
+ 126   2              }
+ 127   1      }
+ 128          
+ 129          void turnright()          //判断右边传感器是否压线
+ 130          {
+ 131   1      
+ 132   1              if(k1==0&&k==0&&k2==1)
+ 133   1              {
+ 134   2                      delay(100);
+ 135   2                      if(k1==0&&k==0&&k2==1)
+ 136   2                      {
+ 137   3                              a=21;
+ 138   3                              b=21;
+ 139   3                              IN1=1;
+ 140   3                              IN2=0;
+ 141   3                              IN3=1;
+ 142   3                              IN4=1;
+ 143   3                      }
+ 144   2              }       
+ 145   1      }
+ 146          void special1()  //全亮
+ 147          {
+ 148   1              if(k1==0&&k==0&&k2==0)
+ 149   1              {
+ 150   2                      delay(100);
+ 151   2                      if(k1==0&&k==0&&k2==0)
+ 152   2                      {
+ 153   3                              a=21;
+ 154   3                              b=21;
+ 155   3                              IN1=1;
+ 156   3                              IN2=0;
+ 157   3                              IN3=1;
+ 158   3                              IN4=0;
+ 159   3                      }
+ 160   2              }               
+ 161   1      }
+ 162          
+ 163          void special2()  //右亮
+ 164          {
+ 165   1              if(k1==1&&k==1&&k2==0)
+ 166   1              {
+ 167   2                      delay(100);
+ 168   2                      if(k1==1&&k==1&&k2==0)
+ 169   2                      {
+ 170   3                              a=21;
+ 171   3                              b=21;
+ 172   3                              IN1=1;
+ 173   3                              IN2=0;
+ 174   3                              IN3=1;
+ 175   3                              IN4=0;
+ 176   3                      }
+ 177   2              }
+ 178   1      }
+ 179          
+C51 COMPILER V9.00   MAIN                                                                  07/11/2018 09:55:28 PAGE 4   
+
+ 180          void special3()  //都不亮
+ 181          {
+ 182   1              if(k1==1&&k==1&&k2==1)
+ 183   1              {
+ 184   2                      delay(100);
+ 185   2                      if(k1==1&&k==1&&k2==1)
+ 186   2                      {
+ 187   3                              a=21;
+ 188   3                              b=21;
+ 189   3                              IN1=1;
+ 190   3                              IN2=0;
+ 191   3                              IN3=1;
+ 192   3                              IN4=0;
+ 193   3                      }
+ 194   2              }
+ 195   1      }
+ 196          
+ 197          void special4()          //左亮
+ 198          {
+ 199   1              if(k1==0&&k==1&&k2==1)
+ 200   1              {
+ 201   2                      delay(100);
+ 202   2                      if(k1==0&&k==1&&k2==1)
+ 203   2                      {
+ 204   3                              a=21;
+ 205   3                              b=23;
+ 206   3                              IN1=1;
+ 207   3                              IN2=0;
+ 208   3                              IN3=1;
+ 209   3                              IN4=0;
+ 210   3                      }
+ 211   2              }       
+ 212   1      }
+ 213          
+ 214          
+ 215          void delay(u16 t)       //延定时函数，用于稳PWM波
+ 216          {
+ 217   1              while(t--);
+ 218   1      }
+ 219          
+ 220          void main()
+ 221          {       
+ 222   1              startup();      //初始化
+ 223   1              while(1)
+ 224   1              {
+ 225   2                      timestart();  
+ 226   2                      gostraight();
+ 227   2                      turnleft();
+ 228   2                      turnright();
+ 229   2                      special1();
+ 230   2                      special2();
+ 231   2                      special3();
+ 232   2                      special4();
+ 233   2              }
+ 234   1      }                       
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    481    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+C51 COMPILER V9.00   MAIN                                                                  07/11/2018 09:55:28 PAGE 5   
+
+   DATA SIZE        =     10    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
